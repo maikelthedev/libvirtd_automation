@@ -25,9 +25,13 @@ Notice in my case it points to a public key as my private ones are in Bitwarden 
 ```fish
 # Clone it in a ~/vms folder
 git clone git@github.com:maikelthedev/libvirtd_automation.git ~/vms
+cd ~/vms 
 
 # Clone the large files with git lfs
 git lfs pull
+
+# Uncompress the .xz image
+xz -dk freebsd14-cloud-init-zfs.qcow2.xz
 
 # Append to ~/.config/fish/config.fish
 set -g fish_function_path $fish_function_path ~/vms/fish_functions
