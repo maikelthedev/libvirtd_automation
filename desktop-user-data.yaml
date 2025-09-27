@@ -1,0 +1,49 @@
+#cloud-config
+hostname: freebsd1
+users:
+  - name: maikel
+    shell: /usr/local/bin/fish
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    lock_passwd: false
+    passwd: "....."
+    ssh_authorized_keys:
+      - ssh ..... kel.dev
+ssh_pwauth: True
+keyboard:
+  layout: es
+packages:
+  - fish
+  - sudo
+  - mkpasswd
+  - neovim
+  - ncdu
+  - xorg 
+  - kde 
+  - sddm
+runcmd:
+  # Enable SSH
+  - sysrc sshd_enable=YES
+  - service sshd start
+
+  # Set Spanish keyboard permanently
+  - sysrc keymap="es.kbd"
+  - service syscons restart
+
+  # Optional: set root and maikel shells to fish explicitly
+  - pw usermod root -s /usr/local/bin/fish
+  - pw usermod maikel -s /usr/local/bin/fish
+  
+  # Auto resize main partition
+  - gpart recover vtbd0
+  - gpart resize -i 4 vtbd0 
+  - zpool online -e zroot /dev/vtbd0p4 
+
+  # Add KDE 
+  - pw groupmod video -m maikel
+  - sysrc dbus_enable="YES"
+  - service dbus start
+  - sysctl net.local.stream.recvspace=65536
+  - sysctl net.local.stream.sendspace=65536
+  - sysrc sddm_enable="YES"
+  - sysrc sddm_lang="es_ES"
+  - service ssdm start

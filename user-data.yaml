@@ -1,0 +1,55 @@
+#cloud-config
+hostname: {{VM_NAME}}
+users:
+  - name: maikel
+    shell: /usr/local/bin/fish
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    lock_passwd: false
+    passwd: "{{PASSWD}}"
+    ssh_authorized_keys:
+      - {{SSH_PUBKEY}}
+ssh_pwauth: True
+keyboard:
+  layout: es
+packages:
+  - fish
+  - sudo
+  - mkpasswd
+  - neovim
+  - ncdu
+  - zerotier
+  - curl
+  - jq
+
+write_files:
+  - path: /root/join-network.sh
+    permissions: '0755'
+    content: |
+      #!/bin/sh
+      zerotier-cli join "{{NWID}}" && \
+      MEMBER_ID=$(zerotier-cli info | awk '{print $3}') && \
+      curl -H "Authorization: token {{ZT_TOKEN}}" -X POST \
+        "https://api.zerotier.com/api/v1/network/{{NWID}}/member/$MEMBER_ID" \
+        --data '{"config": {"authorized": true}}'
+
+runcmd:
+  # Enable SSH
+  - sysrc sshd_enable=YES
+  - service sshd start
+
+  # Set Spanish keyboard permanently
+  - sysrc keymap="es.kbd"
+  - service syscons restart
+
+  # Optional: set root and maikel shells to fish explicitly
+  - pw usermod root -s /usr/local/bin/fish
+  - pw usermod maikel -s /usr/local/bin/fish
+  
+  # Auto resize main partition
+  - gpart recover vtbd0
+  - gpart resize -i 4 vtbd0 
+  - zpool online -e zroot /dev/vtbd0p4 
+  
+  # Zerotier joy
+  - sysrc zerotier_enable="YES"
+  - service zerotier start
