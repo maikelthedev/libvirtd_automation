@@ -1,5 +1,25 @@
 # Libvirtd Automation
 
+## Some assumptions
+1. You have Fish shell
+2. You use Nixos
+3. Your system has all dependencies required for these fish functions
+4. You have something along these lines on your `~/.ssh/config` file
+
+```ini
+Host *
+  IdentityFile ~/.ssh/somekey.pub
+```
+Notice in my case it points to a public key as my private ones are in Bitwarden and I use Bitwarden SSH Agent which changes any reference to a public key for its private one. If yours point to  a public one (e.g.: same without .pub) then replace in `fish_functions/clone_user_data` the next lines
+
+```fish
+# Change this line
+  set PUBKEY (cat $PUBKEYFILE)
+  
+# For this line
+  set PUBKEY (cat $PUBKEYFILE.pub)
+```
+
 ## How to prepare
 
 ```fish
