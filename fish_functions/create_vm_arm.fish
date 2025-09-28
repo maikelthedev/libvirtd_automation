@@ -1,6 +1,6 @@
-function create_vm
+function create_vm_arm
     if test (count $argv) -lt 1
-        echo "Usage: create_vm <vm-name>"
+        echo "Usage: create_vm_arm <vm-name>"
         return 1
     end
 
@@ -10,7 +10,7 @@ function create_vm
     cd $vm_dir
 
     echo "Copying template to VM disk..."
-    cp $HOME/vms/freebsd14-cloud-init-zfs.qcow2 $vm.qcow2
+    cp $HOME/vms/freebsd-arm.qcow2 $vm.qcow2
 
     echo "Creating seed ISO..."
     cloud-localds $vm.iso $vm-user-data.yaml
@@ -29,10 +29,9 @@ function create_vm
         --os-variant freebsd14.0 \
         --import \
         --network network=maikenet,model=virtio \
-        --boot loader=/run/libvirt/nix-ovmf/OVMF_CODE.fd,loader.readonly=yes,loader.type=pflash,nvram.template=/run/libvirt/nix-ovmf/OVMF_VARS.fd \
         --graphics spice \
-        --machine q35 
-    #\
+        --arch aarch64 \
+        --machine virt #\
         # --noautoconsole
 
     echo "VM $vm launched."
