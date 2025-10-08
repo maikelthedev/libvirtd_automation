@@ -46,9 +46,14 @@ function clone_user_data
         return 1
     end
 
-    # If not using Bitwrden this should end in .pub
-    set PUBKEY (cat $PUBKEYFILE)
-
+    if type -q bitwarden
+        # Bitwarden agent is installed, use private key
+        set PUBKEY (cat $PUBKEYFILE)
+    else
+        # Bitwarden agent not installed, use public key
+        set PUBKEY (cat $PUBKEYFILE.pub)
+    end
+    
     sed \
         -e "s|{{VM_NAME}}|$NEWVM|g" \
         -e "s|{{NWID}}|$ZT_NWID|g" \
