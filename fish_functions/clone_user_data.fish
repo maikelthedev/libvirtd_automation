@@ -46,6 +46,7 @@ function clone_user_data
         return 1
     end
 
+    # If not using Bitwrden this should end in .pub
     set PUBKEY (cat $PUBKEYFILE)
 
     sed \
