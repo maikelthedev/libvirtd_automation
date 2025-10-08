@@ -31,9 +31,8 @@ function create_vm
         --network network=maikenet,model=virtio \
         --boot loader=/run/libvirt/nix-ovmf/OVMF_CODE.fd,loader.readonly=yes,loader.type=pflash,nvram.template=/run/libvirt/nix-ovmf/OVMF_VARS.fd \
         --graphics spice \
-        --machine q35 
-    #\
-        # --noautoconsole
+        --machine q35 \
+        --noautoconsole
 
     echo "VM $vm launched."
 end
