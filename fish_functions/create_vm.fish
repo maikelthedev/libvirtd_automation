@@ -10,7 +10,7 @@ function create_vm
     cd $vm_dir
 
     echo "Copying template to VM disk..."
-    cp $HOME/vms/freebsd14-cloud-init-zfs.qcow2 $vm.qcow2
+    cp $HOME/vms/freebsd-amd.qcow2 $vm.qcow2
 
     echo "Creating seed ISO..."
     cloud-localds $vm.iso $vm-user-data.yaml
